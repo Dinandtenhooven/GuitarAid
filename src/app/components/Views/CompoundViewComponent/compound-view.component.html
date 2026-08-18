@@ -1,0 +1,30 @@
+<div [ngClass]="getWrapperClass()">
+    @if(isEditor()) {
+        <div>
+            <button (click)="setLayout('horizontal')">horizontal</button>
+            <button (click)="setLayout('vertical')">vertical</button>
+        </div>
+    }
+    
+    <div [ngClass]="{
+            vertical: 'vertical' === layout(),
+            horizontal: 'horizontal' === layout()
+        }">
+
+        @for(view of views(); track view; let idx = $index) {
+            <div class="item">
+                <app-view-renderer 
+                    [node]="view.type"
+                    [index]="idx"
+                    (update)="setView($event)"
+                >
+                </app-view-renderer>
+            </div>
+        }
+
+    </div>
+
+    @if(isEditor()) {
+        <button (click)="addView()">+</button>
+    }
+</div>

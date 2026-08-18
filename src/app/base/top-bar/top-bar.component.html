@@ -1,0 +1,11 @@
+<div class="top-bar-wrapper" (change)="onChange($event)">
+    top bar menu
+
+    <select>
+        <option>editor</option>
+        <option>regular</option>
+    </select>
+
+    {{ this.appService.currentState() }}
+</div>
+

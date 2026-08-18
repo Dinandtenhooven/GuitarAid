@@ -1,0 +1,62 @@
+<div class="neck">
+
+
+  <!-- fret markers -->
+  <div class="markers">
+
+    @for (fret of markerFrets; track fret) {
+
+      <div
+        class="marker"
+        [style.left]="getMarkerPosition(fret)">
+
+        @if (fret === 12) {
+
+          <div class="double-marker">
+            <div class="marker-dot"></div>
+            <div class="marker-dot"></div>
+          </div>
+
+        } @else {
+
+          <div class="marker-dot"></div>
+
+        }
+
+      </div>
+
+    }
+
+  </div>
+
+
+
+  <!-- strings -->
+
+  @for (string of fretboard; track $index) {
+
+    <div class="string">
+
+      @for (note of string; track note.fret) {
+
+        <div class="fret">
+
+          <div
+            class="note"
+            [class.active]="note.highlighted"
+            [class.open]="note.fret === 0">
+
+            {{ note.note }}
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+
+</div>

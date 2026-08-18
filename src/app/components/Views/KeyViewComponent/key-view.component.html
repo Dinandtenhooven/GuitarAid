@@ -1,0 +1,25 @@
+<div class="base-wrapper item">
+    @if(isEditor()) {
+        <label>show guitar neck</label>
+        <input (change)="displayGuitarNeck($event)" type="checkbox" />
+
+        <select (change)="setKey($event)">
+            @for(key of keys; track key) {
+                <option>{{key}}</option>
+            }
+        </select>
+
+        <select (change)="setScale($event)">
+            @for(scale of scales; track scale) {
+                <option>{{scale}}</option>
+            }
+        </select>
+    }
+    @else {
+        {{ selectedKey() }} {{ selectedScale() }}
+
+        @if(showNeck()) {
+            <app-guitar-neck></app-guitar-neck>
+        }
+    }
+</div>
