@@ -1,0 +1,104 @@
+<div class="song-order-editor">
+  <div class="toolbar" *ngIf="isEditor()">
+    <button type="button" (click)="addSection('Verse')">+ Verse</button>
+    <button type="button" (click)="addSection('Chorus')">+ Chorus</button>
+    <button type="button" (click)="addSection('Bridge')">+ Bridge</button>
+    <button type="button" (click)="addSection('Intro')">+ Intro</button>
+    <button type="button" (click)="addSection('Outro')">+ Outro</button>
+    <button type="button" (click)="addSection('Solo')">+ Solo</button>
+  </div>
+
+  <div class="song-sections">
+    <div
+      class="song-section"
+      *ngFor="let section of sections; let index = index"
+      draggable="true"
+      (dragstart)="onDragStart(index)"
+      (dragover)="$event.preventDefault()"
+      (drop)="onDrop(index)"
+    >
+      @if(isEditor()) {  
+        <div class="section-header">
+            <div class="drag-handle" aria-label="Reorder section">⋮⋮</div>
+        
+            <input
+                class="section-name"
+                type="text"
+                [(ngModel)]="section.name"
+                [attr.aria-label]="'Section name for ' + section.type"
+                placeholder="Verse 1"
+            />
+            <select [(ngModel)]="section.type" aria-label="Section type">
+                <option value="Verse">Verse</option>
+                <option value="Chorus">Chorus</option>
+                <option value="Bridge">Bridge</option>
+                <option value="Intro">Intro</option>
+                <option value="Outro">Outro</option>
+                <option value="Solo">Solo</option>
+            </select>
+        
+            <button type="button" class="danger" (click)="removeSection(section.id)" *ngIf="isEditor()">Delete</button>
+        </div>
+      } @else {
+        <span class="section-header">
+            <span></span>
+            <span>{{ section.name || section.type }}</span>
+            <span>({{ section.type }})</span>
+        </span>
+      }
+
+    @if(isEditor()) {  
+        <div class="bars-form">
+            <div class="bars-form-group">
+                <label>Time:</label>
+                <input type="number" 
+                    class="bars-form-numerator" 
+                    placeholder="4" min="1"
+                    (input)="changeTimeMeasures(section)"
+                />
+                <span class="bars-form-slash">/</span>
+                <input type="number" 
+                    class="bars-form-denominator" 
+                    placeholder="4" min="1"
+                    (input)="changeTimeMeasures(section)"
+                />
+            </div>
+            <div class="bars-form-group">
+                <label>Repeats:</label>
+                <input type="number" 
+                    class="bars-form-repeats" 
+                    placeholder="1" min="1"
+                    (input)="changeTimeMeasures(section)"
+                />
+            </div>
+        </div>
+    } @else {
+        <div class="bars-display">
+            <span>Time: {{ section.timeSignature || '4/4' }}</span>
+            <span>Repeats: {{ section.repeats || 1 }}</span>
+        </div>
+    }
+
+      <div class="song-measures">
+        <div
+          class="song-measure"
+          *ngFor="let measure of section.measures; let measureIndex = index"
+        >
+          <div class="measure-beats" ngClass="measure-{{ measure.time % 2 === 0 ? 'even' : 'odd' }}">
+            <div
+              class="beat"
+              *ngFor="let beat of measure.beats; let beatIndex = index"
+            >
+              <input
+                type="text"
+                placeholder="Chord"
+                [attr.aria-label]="'Chord for beat ' + (beatIndex + 1) + ' in measure ' + measure.time"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
