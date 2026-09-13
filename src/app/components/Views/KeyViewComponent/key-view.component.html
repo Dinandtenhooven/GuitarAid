@@ -15,11 +15,15 @@
             }
         </select>
     }
-    @else {
+
+    <div class="key-display">
         {{ selectedKey() }} {{ selectedScale() }}
 
         @if(showNeck()) {
-            <app-guitar-neck></app-guitar-neck>
+            <app-guitar-neck
+                [rootNote]="selectedKey()"
+                [scale]="selectedScale()"
+            ></app-guitar-neck>
         }
-    }
+    </div>
 </div>

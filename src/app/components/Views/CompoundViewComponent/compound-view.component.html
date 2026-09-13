@@ -1,8 +1,25 @@
 <div [ngClass]="getWrapperClass()">
     @if(isEditor()) {
-        <div>
-            <button (click)="setLayout('horizontal')">horizontal</button>
-            <button (click)="setLayout('vertical')">vertical</button>
+        <div class="layout-controls" role="radiogroup" aria-label="View layout">
+            <span class="layout-label">Layout</span>
+            <button
+                type="button"
+                class="layout-option"
+                [class.selected]="layout() === 'horizontal'"
+                [attr.aria-checked]="layout() === 'horizontal'"
+                (click)="setLayout('horizontal')"
+            >
+                Horizontal
+            </button>
+            <button
+                type="button"
+                class="layout-option"
+                [class.selected]="layout() === 'vertical'"
+                [attr.aria-checked]="layout() === 'vertical'"
+                (click)="setLayout('vertical')"
+            >
+                Vertical
+            </button>
         </div>
     }
     
@@ -11,14 +28,43 @@
             horizontal: 'horizontal' === layout()
         }">
 
-        @for(view of views(); track view; let idx = $index) {
+        @for(view of views(); track idx + ':' + view.type; let idx = $index) {
             <div class="item">
-                <app-view-renderer 
-                    [node]="view.type"
-                    [index]="idx"
-                    (update)="setView($event)"
-                >
-                </app-view-renderer>
+                @if(isEditor()) {
+                    <div class="view-controls" role="toolbar" [attr.aria-label]="'Edit view ' + (idx + 1)">
+                        <span class="view-number">View {{ idx + 1 }}</span>
+                        <select
+                            [value]="view.type"
+                            [attr.aria-label]="'View type for view ' + (idx + 1)"
+                            (change)="changeType(idx, $any($event.target).value)"
+                        >
+                            @for(type of viewTypes; track type) {
+                                <option [value]="type">{{ type }}</option>
+                            }
+                        </select>
+                        <button
+                            type="button"
+                            (click)="toggleView(view)"
+                            [attr.aria-label]="(isViewExpanded(view) ? 'Hide' : 'Show') + ' component for view ' + (idx + 1)"
+                            [attr.aria-pressed]="isViewExpanded(view)"
+                        >
+                            {{ isViewExpanded(view) ? 'Hide component' : 'Show component' }}
+                        </button>
+                        <button type="button" (click)="moveView(idx, -1)" [disabled]="idx === 0" [attr.aria-label]="'Move view ' + (idx + 1) + ' up'">Up</button>
+                        <button type="button" (click)="moveView(idx, 1)" [disabled]="idx === views().length - 1" [attr.aria-label]="'Move view ' + (idx + 1) + ' down'">Down</button>
+                        <button type="button" class="remove" (click)="removeView(idx)" [attr.aria-label]="'Remove view ' + (idx + 1)">Remove</button>
+                    </div>
+                }
+                @if(!isEditor() || isViewExpanded(view)) {
+                    <div class="view-content">
+                        <app-view-renderer
+                            [node]="view.type"
+                            [index]="idx"
+                            (update)="setView($event)"
+                        >
+                        </app-view-renderer>
+                    </div>
+                }
             </div>
         }
 

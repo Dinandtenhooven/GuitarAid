@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, input, Input, output, ViewChild, ViewContainerRef } from "@angular/core";
+import { AfterViewInit, Component, effect, inject, input, output, Injector, ViewChild, ViewContainerRef } from "@angular/core";
 import { ViewRegistry } from "../../view-registry";
 import { SetViewParams } from "../../components/interfaces/set-view.interface";
 
@@ -17,21 +17,29 @@ export class ViewRendererComponent implements AfterViewInit {
   @ViewChild('container', { read: ViewContainerRef })
   container!: ViewContainerRef;
 
-  constructor(private registry: ViewRegistry) {}
+  private readonly injector = inject(Injector);
+  private readonly registry = inject(ViewRegistry);
 
   ngAfterViewInit() {
-    let componentType = this.registry.get(this.node());
+    effect(() => {
+      this.render(this.node());
+    }, { injector: this.injector });
+  }
+
+  private render(type: string): void {
+    let componentType = this.registry.get(type);
 
     if(!componentType) {
       componentType = this.registry.error();
     }
 
+    this.container.clear();
     const ref = this.container.createComponent(componentType);
-    console.log(this.index());
     ref.instance.index = this.index();
     
-    if("setView" in ref.instance) {
-      ref.instance.setView.subscribe((params: SetViewParams) => {
+    const setView = ref.instance.setView;
+    if (setView && typeof setView.subscribe === 'function') {
+      setView.subscribe((params: SetViewParams) => {
         this.update.emit(params);
       });
     }
