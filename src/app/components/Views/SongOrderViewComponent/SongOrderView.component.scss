@@ -209,9 +209,163 @@
 }
 
 .song-measure {
-    display: inline;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
-    border-radius: 6px;
+  min-width: 0;
+  padding: 10px 14px;
+  border-right: 2px solid #aeb8c2;
+  background: #ffffff;
+}
+
+.song-measures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid #d8dee4;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.measure-beats {
+  display: grid;
+  grid-template-columns: repeat(var(--beat-count, 4), minmax(0, 1fr));
+  gap: 8px;
+}
+
+.measure-beats.measure-even {
+  background: transparent;
+}
+
+.song-measure:has(.measure-beats.measure-even) {
+  background: #eef1f4;
+}
+
+.beat input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1;
+  box-sizing: border-box;
+  padding: 8px 4px;
+  border: 1px solid #b8c2cc;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #17212b;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.beat input::placeholder {
+  color: #8a96a3;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.beat input:hover,
+.beat input:focus {
+  border-color: #0969da;
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.14);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.chord-builder-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(27, 36, 48, 0.42);
+}
+
+.chord-builder {
+  display: grid;
+  gap: 16px;
+  width: min(100%, 380px);
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #d8dee4;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(27, 36, 48, 0.2);
+}
+
+.chord-builder-header,
+.chord-builder-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.chord-builder h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.chord-builder > label,
+.extension-option {
+  display: grid;
+  gap: 6px;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chord-builder select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  background: #fff;
+  color: #1b2430;
+}
+
+.chord-builder fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  border: 1px solid #d8dee4;
+  border-radius: 8px;
+}
+
+.extension-option {
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+}
+
+.chord-preview {
+  padding: 12px;
+  background: #eef6ff;
+  border-radius: 8px;
+  color: #0969da;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.chord-builder-actions .primary {
+  background: #0969da;
+  border-color: #0969da;
+  color: #fff;
+}
+
+@media (max-width: 720px) {
+  .song-measures {
+    grid-template-columns: 1fr;
+  }
+
+  .song-measure {
+    border-right: 0;
+    border-bottom: 2px solid #aeb8c2;
+  }
+
+  .song-measure:last-child {
+    border-bottom: 0;
+  }
 }

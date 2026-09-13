@@ -51,24 +51,26 @@
         <div class="bars-form">
             <div class="bars-form-group">
                 <label>Time:</label>
-                <input type="number" 
+                <input type="number"
                     class="bars-form-numerator" 
-                    placeholder="4" min="1"
-                    (input)="changeTimeMeasures(section)"
+                  min="1"
+                  [ngModel]="getTimePart(section, 'numerator')"
+                  (ngModelChange)="changeTimeMeasures(section, $event, 'numerator')"
                 />
                 <span class="bars-form-slash">/</span>
-                <input type="number" 
+                <input type="number"
                     class="bars-form-denominator" 
-                    placeholder="4" min="1"
-                    (input)="changeTimeMeasures(section)"
+                  min="1"
+                  [ngModel]="getTimePart(section, 'denominator')"
+                  (ngModelChange)="changeTimeMeasures(section, $event, 'denominator')"
                 />
             </div>
             <div class="bars-form-group">
                 <label>Repeats:</label>
-                <input type="number" 
+                <input type="number"
                     class="bars-form-repeats" 
-                    placeholder="1" min="1"
-                    (input)="changeTimeMeasures(section)"
+                  min="1"
+                  [(ngModel)]="section.repeats"
                 />
             </div>
         </div>
@@ -84,7 +86,11 @@
           class="song-measure"
           *ngFor="let measure of section.measures; let measureIndex = index"
         >
-          <div class="measure-beats" ngClass="measure-{{ measure.time % 2 === 0 ? 'even' : 'odd' }}">
+          <div
+            class="measure-beats"
+            [class.measure-even]="measure.time % 2 === 0"
+            [style.--beat-count]="measure.beats.length"
+          >
             <div
               class="beat"
               *ngFor="let beat of measure.beats; let beatIndex = index"
@@ -92,12 +98,55 @@
               <input
                 type="text"
                 placeholder="Chord"
+                [value]="beat"
+                readonly
+                (input)="changeSectionBeat($event, measure, beatIndex)"
+                (click)="openChordBuilder(section.id, measure.id, beatIndex, beat)"
                 [attr.aria-label]="'Chord for beat ' + (beatIndex + 1) + ' in measure ' + measure.time"
               />
             </div>
           </div>
         </div>
       </div>
+
+      @if (chordEditor) {
+        <div class="chord-builder-backdrop" (click)="closeChordBuilder()">
+          <section class="chord-builder" role="dialog" aria-modal="true" aria-labelledby="chord-builder-title" (click)="$event.stopPropagation()">
+            <div class="chord-builder-header">
+              <h2 id="chord-builder-title">Build chord</h2>
+              <button type="button" class="icon-button" aria-label="Close chord builder" (click)="closeChordBuilder()">&times;</button>
+            </div>
+            <label>
+              Key
+              <select [(ngModel)]="chordRoot">
+                <option *ngFor="let root of chordRoots" [value]="root">{{ root }}</option>
+              </select>
+            </label>
+            <label>
+              Quality
+              <select [(ngModel)]="chordQuality">
+                <option *ngFor="let quality of chordQualities" [value]="quality.value">{{ quality.label }}</option>
+              </select>
+            </label>
+            <fieldset>
+              <legend>Extensions</legend>
+              <label class="extension-option" *ngFor="let extension of chordExtensionOptions">
+                <input
+                  type="checkbox"
+                  [checked]="chordExtensions.includes(extension)"
+                  (change)="toggleChordExtension(extension)"
+                />
+                {{ extension }}
+              </label>
+            </fieldset>
+            <div class="chord-preview" aria-live="polite">{{ chordRoot }}{{ chordQuality }}{{ chordExtensions.join('') }}</div>
+            <div class="chord-builder-actions">
+              <button type="button" (click)="closeChordBuilder()">Cancel</button>
+              <button type="button" class="primary" (click)="applyChord()">Use chord</button>
+            </div>
+          </section>
+        </div>
+      }
 
     </div>
   </div>
